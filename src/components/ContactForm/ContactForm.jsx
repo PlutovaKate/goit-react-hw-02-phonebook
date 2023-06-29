@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 class ContactForm extends Component {
   state = {
+    contacts: [],
     name: '',
     id: '',
     number: '',
@@ -13,16 +14,39 @@ class ContactForm extends Component {
     const { name, value, number } = event.currentTarget;
     this.setState({ [name]: value, [number]: value });
   };
-  onFormSubmit = event => {};
+  onFormSubmit = event => {
+    event.preventDefault();
+    const id = nanoid();
+    const form = event.currentTarget;
+    const name = form.elements.name.value;
+    const number = form.elements.number.value;
+
+    const doubleContact = this.props.contacts.find(
+      contact => contact.name === name
+    );
+    if (doubleContact) {
+      alert(`${name} is already in contacts`);
+    } else {
+      this.props.submit({ name, id, number });
+      this.resetForm();
+    }
+  };
+
+  resetForm = () => {
+    this.setState({ name: '', id: '', number: '', contacts: '' });
+  };
   render() {
     return (
       <form onSubmit={this.onFormSubmit} className={css.form}>
-        <label className={css.label}>Name</label>
+        <label htmlFor={this.id} className={css.label}>
+          Name
+        </label>
         <input
           onChange={this.handleChange}
           className={css.input}
           type="text"
           name="name"
+          value={this.state.name}
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
@@ -31,8 +55,9 @@ class ContactForm extends Component {
         <input
           onChange={this.handleChange}
           className={css.input}
-          type="text"
-          name="name"
+          type="tel"
+          name="number"
+          value={this.state.number}
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
@@ -44,5 +69,15 @@ class ContactForm extends Component {
     );
   }
 }
+
+ContactForm.propTypes = {
+  contacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
 
 export default ContactForm;

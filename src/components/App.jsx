@@ -1,58 +1,58 @@
 import { Component } from 'react';
 import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import Filter from './Filter/Filter';
 import css from './App.module.css';
 
 export class App extends Component {
-  // state = {
-  //   contacts: [],
-  //   name: '',
-  // };
+  state = {
+    contacts: [],
+    filter: '',
+  };
+
+  formSubmitHandler = contact => {
+    this.setState(prev => {
+      return {
+        contacts: [...prev.contacts, contact],
+      };
+    });
+  };
+
+  deleteContact = idContact => {
+    const filteredById = this.state.contacts.filter(
+      contact => contact.id !== idContact
+    );
+    this.setState({ contacts: filteredById });
+  };
+
+  filteredByName = () => {
+    const filteredByName = this.state.contacts.filter(({ name }) =>
+      name.toLowerCase().includes(this.state.filter)
+    );
+
+    return filteredByName ? filteredByName : this.state.contacts;
+  };
+
+  filterContacts = event => {
+    this.setState({ filter: event.currentTarget.value });
+  };
 
   render() {
     return (
       <div className={css.container}>
         <h1>Phonebook</h1>
-        <ContactForm />
-        {/* <form>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-          ></input>
-          <label>Number</label>
-          <input
-            type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-          ></input>
-          <button>Add Contacts</button>
-        </form> */}
+        <ContactForm
+          submit={this.formSubmitHandler}
+          contacts={this.state.contacts}
+        />
+
         <h2>Contacts</h2>
-        <label>Find contacts by name</label>
-        <input></input>
-        <ul>
-          <li>
-            qweqwe
-            <button>Delete</button>
-          </li>
-          <li>
-            qweqwe
-            <button>Delete</button>
-          </li>
-          <li>
-            qweqwe
-            <button>Delete</button>
-          </li>
-          <li>
-            qweqwe
-            <button>Delete</button>
-          </li>
-        </ul>
+        <Filter onChange={this.filterContacts} />
+
+        <ContactList
+          contacts={this.filteredByName()}
+          deleteContact={this.deleteContact}
+        />
       </div>
     );
   }
