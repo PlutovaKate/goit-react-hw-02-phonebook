@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 
 class ContactForm extends Component {
   state = {
-    contacts: [],
     name: '',
-    id: '',
     number: '',
   };
   handleChange = event => {
@@ -16,7 +14,7 @@ class ContactForm extends Component {
   };
   onFormSubmit = event => {
     event.preventDefault();
-    const id = nanoid();
+
     const form = event.currentTarget;
     const name = form.elements.name.value;
     const number = form.elements.number.value;
@@ -27,13 +25,14 @@ class ContactForm extends Component {
     if (doubleContact) {
       alert(`${name} is already in contacts`);
     } else {
+      const id = nanoid();
       this.props.submit({ name, id, number });
       this.resetForm();
     }
   };
 
   resetForm = () => {
-    this.setState({ name: '', id: '', number: '', contacts: '' });
+    this.setState({ name: '', number: '' });
   };
   render() {
     return (

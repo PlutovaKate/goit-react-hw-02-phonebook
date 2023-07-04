@@ -19,10 +19,11 @@ export class App extends Component {
   };
 
   deleteContact = idContact => {
-    const filteredById = this.state.contacts.filter(
-      contact => contact.id !== idContact
-    );
-    this.setState({ contacts: filteredById });
+    this.setState(prev => {
+      return {
+        contacts: prev.contacts.filter(contact => contact.id !== idContact),
+      };
+    });
   };
 
   filteredByName = () => {
